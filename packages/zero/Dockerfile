@@ -13,7 +13,6 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 FROM node:22.11.0-alpine3.20
 
 ARG ZERO_VERSION
-
 RUN test -n "$ZERO_VERSION"
 
 RUN apk add --update curl
@@ -35,6 +34,7 @@ RUN if echo "$ZERO_VERSION" | grep -q "\.tgz$"; then \
     npm install -g @rocicorp/zero@${ZERO_VERSION}; \
   fi
 
+
 # Copy litestream executable and config.yml
 COPY --from=litestream /usr/local/bin/litestream /usr/local/bin/litestream
 RUN cp /usr/local/lib/node_modules/@rocicorp/zero/out/zero-cache/src/services/litestream/config.yml /etc/litestream.yml
@@ -43,6 +43,7 @@ ENV ZERO_LITESTREAM_EXECUTABLE=/usr/local/bin/litestream
 ENV ZERO_LITESTREAM_CONFIG_PATH=/etc/litestream.yml
 ENV ZERO_LOG_FORMAT=json
 ENV ZERO_SERVER_VERSION=${ZERO_VERSION}
+ENV ZERO_LITESTREAM_REPLICA_TYPE=s3
 
 EXPOSE 4848 4849
 ENTRYPOINT ["/bin/sh", "-c"]
